@@ -1,5 +1,6 @@
 module TrajectoryPotentials
-
-# Write your package code here.
-
+    using LinearAlgebra
+    using SparseArrays
+    using RegularizationTools
+    include("models.jl")
 end

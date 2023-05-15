@@ -3,6 +3,11 @@ uuid = "56f97847-f42e-4d22-a0eb-8783c0d4806f"
 authors = ["Rahul Manavalan <rahul.learns.physics@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+RegularizationTools = "29dad682-9a27-4bc3-9c72-016788665182"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
 [compat]
 julia = "1"
 
