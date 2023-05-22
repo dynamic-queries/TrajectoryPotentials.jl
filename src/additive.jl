@@ -1,4 +1,4 @@
-mutable struct AdditiveRadialModel <: AbstractModel
+mutable struct AdditiveRadialModel <: Dyadic
     z::AbstractArray
     dz::AbstractArray
     R::Any

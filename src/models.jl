@@ -1,5 +1,4 @@
-abstract type AbstractModel end
-
+# Optimizers
 abstract type AbstractOptimizer end
 struct LSTSQ <: AbstractOptimizer end
 struct Tikhonov <: AbstractOptimizer 
@@ -10,15 +9,32 @@ struct Tikhonov <: AbstractOptimizer
         new(l1,l2)
     end 
 end
+struct NN <: AbstractOptimizer end
 
+# Interaction Models
 abstract type AbstractInteraction end
-struct Dyadic <: AbstractInteraction end
-struct Triadic <: AbstractInteraction end
-struct Quadadic <: AbstractInteraction end
+abstract type Dyadic <: AbstractInteraction end
+abstract type Triadic <: AbstractInteraction end
+abstract type Quadadic <: AbstractInteraction end
 
-include("radial.jl")
-export RadialModel, infer!, radial_bases!, uniform_points
-include("additive.jl")
-export AdditiveRadialModel, infer!, evaluate
+# Bases types
+abstract type AbstractRadialBases end
 
-export LSTSQ, Tikhonov
+include("bases.jl")
+export RadialBases, RadialCutoffBases, RadialKRBases
+export bases, coeff
+
+include("linear.jl")
+include("nn.jl")
+
+# include("radial.jl")
+# export RadialModel
+
+# include("radial_full.jl")
+# export FullRadialModel
+
+# include("additive.jl")
+# export AdditiveRadialModel
+
+# export LSTSQ, Tikhonov, NN
+# export infer!, radial_bases!, uniform_points, evaluate

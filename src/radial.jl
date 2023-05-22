@@ -1,4 +1,4 @@
-mutable struct RadialModel <: AbstractModel
+mutable struct RadialModel <: Dyadic
     z::AbstractArray # size(z) = (input_dims, ntimesteps, nparticles, nics) 
     dz::AbstractArray # size(dz) = (input_dims, ntimesteps, nparticles, nics)
     R::Any
@@ -86,7 +86,7 @@ function (rad::RadialModel)(α::Float64, γ::Float64)
 end
 
 function assemble_block(rad::RadialModel, ics::Int, par::Int)
-    
+    r = rad.r[:,ts,ics]
 end 
 
 function assemble_band!(rad::RadialModel, ics::Int, ts::Int)
@@ -136,7 +136,7 @@ function infer!(rad::RadialModel, ics::Int, ts::Int, reg::Tikhonov)
     nothing
 end
 
-function evaluate(rad::RadialModel, x::Float64)
+function evaluate(rad::Dyadic, x::Float64)
     k = rad.rcoeff
     rbases = rad.rbases
     sol = 0.0
@@ -146,7 +146,7 @@ function evaluate(rad::RadialModel, x::Float64)
     sol
 end 
 
-function evaluate(rad::RadialModel, R::AbstractArray)
+function evaluate(rad::Dyadic, R::AbstractArray)
     k = rad.rcoeff
     rbases = rad.rbases
     
