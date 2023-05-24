@@ -22,19 +22,15 @@ abstract type AbstractRadialBases end
 
 include("bases.jl")
 export RadialBases, RadialCutoffBases, RadialKRBases
-export bases, coeff
+export bases, coeff, combined_basis_and_coeff
 
-include("linear.jl")
+include("rbf.jl")
+export RBFForceField
+
+include("piecewise.jl")
+export PiecewiseLinearForceField
+export PiecewiseQuadraticForceField
+export PiecewiseCubicForceField
+
 include("nn.jl")
-
-# include("radial.jl")
-# export RadialModel
-
-# include("radial_full.jl")
-# export FullRadialModel
-
-# include("additive.jl")
-# export AdditiveRadialModel
-
-# export LSTSQ, Tikhonov, NN
-# export infer!, radial_bases!, uniform_points, evaluate
+export NeuralForceField

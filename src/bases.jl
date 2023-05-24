@@ -39,6 +39,24 @@ function coeff(rad::RadialBases, particle::Int, ts::Int, ic::Int)
     @views rad.r[particle,:,ts,ic]
 end 
 
+function combined_basis_and_coeff(rad::RadialBases)
+    natoms = size(rad.z, 3)
+    RB = []
+    RC = []
+    for i=1:natoms
+        push!(RB,bases(rad,i,1,1))
+        push!(RC,coeff(rad,i,1,1))
+    end 
+
+    RBasis = spzeros(2*natoms,natoms*natoms)
+    RCoeff = spzeros(natoms*natoms)
+    for i=1:natoms
+        RBasis[2*(i-1)+1:2*(i),natoms*(i-1)+1:natoms*(i)] .= RB[i]
+        RCoeff[natoms*(i-1)+1:natoms*(i)] .= RC[i]
+    end 
+    RBasis,RCoeff
+end 
+
 #---------------------------------------------------------------------------------------#
 
 mutable struct RadialCutoffBases <: AbstractRadialBases
@@ -105,6 +123,34 @@ function coeff(rad::RadialCutoffBases, thres::Float64, particle::Int, ts::Int, i
     @views rad.r[particle,idxt,ts,ic]
 end 
 
+
+function combined_basis_and_coeff(rad::RadialCutoffBases)
+    natoms = size(rad.z, 3)
+    RB = []
+    RC = []
+    thres = 0.5
+    for i=1:natoms
+        push!(RB,bases(rad,thres,i,1,1))
+        push!(RC,coeff(rad,thres,i,1,1))
+    end
+
+    ncols = 0
+    for i=1:natoms
+        ncols += size(RB[i],2)
+    end 
+
+    RBasis = spzeros(2*natoms,ncols)
+    RCoeff = spzeros(ncols)
+    RBasis[1:2,1:size(RB[1],2)] .= RB[1]
+    k = size(RB[1],2)
+    for i=2:natoms 
+        k2 = size(RB[i],2)
+        RBasis[2*(i-1)+1:2*(i),k+1:k+k2] .= RB[i]
+        RCoeff[k+1:k+k2] .= RC[i]
+        k += size(RB[i],2)
+    end
+    RBasis, RCoeff
+end 
 #---------------------------------------------------------------------------------------#
 
 mutable struct RadialKRBases <: AbstractRadialBases
@@ -168,4 +214,32 @@ function coeff(rad::RadialKRBases, particle::Int, ts::Int, ics::Int)
     @views R1[start:start+l-1]
 end 
 
+
+function combined_basis_and_coeff(rad::RadialKRBases)
+    natoms = size(rad.z, 3)
+    RB = []
+    RC = []
+    thres = 0.5
+    for i=1:natoms
+        push!(RB,bases(rad,i,1,1))
+        push!(RC,coeff(rad,i,1,1))
+    end
+
+    ncols = 0
+    for i=1:natoms
+        ncols += size(RB[i],2)
+    end 
+
+    RBasis = spzeros(2*natoms,ncols)
+    RCoeff = spzeros(ncols)
+    RBasis[1:2,1:size(RB[1],2)] .= RB[1]
+    k = size(RB[1],2)
+    for i=2:natoms 
+        k2 = size(RB[i],2)
+        RBasis[2*(i-1)+1:2*(i),k+1:k+k2] .= RB[i]
+        RCoeff[k+1:k+k2] .= RC[i]
+        k += size(RB[i],2)
+    end
+    RBasis, RCoeff
+end 
 #---------------------------------------------------------------------------------------#

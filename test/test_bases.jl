@@ -48,20 +48,7 @@ F = reshape(permutedims(F,(3,2,1)),(2,:,natoms,1))
 
 # Radial map
 rad = RadialBases(V)
-RB = []
-RC = []
-for i=1:natoms
-    push!(RB,bases(rad,i,1,1))
-    push!(RC,coeff(rad,i,1,1))
-end 
-
-RBasis = spzeros(2*natoms,natoms*natoms)
-RCoeff = spzeros(natoms*natoms)
-for i=1:natoms
-    RBasis[2*(i-1)+1:2*(i),natoms*(i-1)+1:natoms*(i)] .= RB[i]
-    RCoeff[natoms*(i-1)+1:natoms*(i)] .= RC[i]
-end 
-
+RBasis,RCoeff = combined_basis_and_coeff(rad)
 f1 = heatmap(Array(RBasis))
 f2 = plot(Array(RCoeff))
 plot(f1,f2,size=(1000,1000))
@@ -69,31 +56,7 @@ savefig("figures/test_radial.png")
 
 # Sorted Radial Map with cutoff
 rad = RadialCutoffBases(V)
-RB = []
-RC = []
-thres = 0.5
-for i=1:natoms
-    push!(RB,bases(rad,thres,i,1,1))
-    push!(RC,coeff(rad,thres,i,1,1))
-end
-
-ncols = 0
-for i=1:natoms
-    global ncols += size(RB[i],2)
-end 
-
-RBasis = spzeros(2*natoms,ncols)
-RCoeff = spzeros(ncols)
-RBasis[1:2,1:size(RB[1],2)] .= RB[1]
-k = size(RB[1],2)
-for i=2:natoms 
-    k2 = size(RB[i],2)
-    RBasis[2*(i-1)+1:2*(i),k+1:k+k2] .= RB[i]
-    RCoeff[k+1:k+k2] .= RC[i]
-    global k += size(RB[i],2)
-end 
-
-
+RBasis,RCoeff = combined_basis_and_coeff(rad)
 f1 = heatmap(Array(RBasis))
 f2 = plot(Array(RCoeff))
 plot(f1,f2,size=(1000,1000))
@@ -102,30 +65,7 @@ savefig("figures/test_cutoff_radial.png")
 
 # Radial Map - Unique pairwise
 rad = RadialKRBases(V)
-RB = []
-RC = []
-for i=1:natoms
-    push!(RB,bases(rad,i,1,1))
-    push!(RC,coeff(rad,i,1,1))
-end
-
-ncols = 0
-for i=1:natoms
-    global ncols += size(RB[i],2)
-end 
-
-RBasis = spzeros(2*natoms,ncols)
-RCoeff = spzeros(ncols)
-RBasis[1:2,1:size(RB[1],2)] .= RB[1]
-k = size(RB[1],2)
-for i=2:natoms 
-    k2 = size(RB[i],2)
-    RBasis[2*(i-1)+1:2*(i),k+1:k+k2] .= RB[i]
-    RCoeff[k+1:k+k2] .= RC[i]
-    global k += size(RB[i],2)
-end 
-
-
+RBasis,RCoeff = combined_basis_and_coeff(rad)
 f1 = heatmap(Array(RBasis))
 f2 = plot(Array(RCoeff))
 plot(f1,f2,size=(1000,1000))
